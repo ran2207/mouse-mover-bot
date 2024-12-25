@@ -58,7 +58,3 @@ These Node.js scripts move your mouse randomly on the screen to keep your system
 - The script uses `robotjs` to get the current mouse position and move the mouse smoothly.
 - Make sure you run these scripts in a terminal window (VSCode, Terminal, Command Prompt, etc.) to see the console logs.
 - **Security Warning**: Moving the mouse with a script might interfere with user activity. Use responsibly and at your own risk.
-
-```
-
-```
