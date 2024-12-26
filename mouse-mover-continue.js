@@ -12,6 +12,7 @@ let moveTimeout = null;
 let sleepTimeout = null;
 let isMoving = false;
 let checkInterval = null;
+let lastUserActivityTime = Date.now();
 
 // Function to generate a random integer within a range
 function getRandomInt(min, max) {
@@ -21,9 +22,22 @@ function getRandomInt(min, max) {
 // Function to check if user is moving the mouse during sleep period
 function checkMouseMovement() {
     const currentPos = robot.getMousePos();
-    // If the script isn't moving the mouse and we detect movement, just log a message
+    // If the script isn't moving the mouse and we detect movement
     if (!isMoving && (currentPos.x !== lastMousePos.x || currentPos.y !== lastMousePos.y)) {
-        console.log('User movement detected during sleep. The script will continue running...');
+        console.log('User movement detected. Waiting for 1 minute of inactivity...');
+        lastUserActivityTime = Date.now(); // Reset the inactivity timer
+        
+        // Clear existing timeout if there is one
+        if (sleepTimeout) {
+            clearTimeout(sleepTimeout);
+        }
+        
+        // Set new timeout to check for inactivity
+        sleepTimeout = setTimeout(() => {
+            console.log('No user activity detected for 1 minute. Resuming bot movement...');
+            clearInterval(checkInterval);
+            moveMouseRandomly();
+        }, 60000);
     }
     lastMousePos = currentPos;
 }
@@ -52,11 +66,11 @@ function moveMouseRandomly() {
         // Start movement checking during sleep
         checkInterval = setInterval(checkMouseMovement, 100);
 
-        // Sleep for 1 minute, then move the mouse again
+        // Set timeout for next movement if no user activity is detected
         sleepTimeout = setTimeout(() => {
-            clearInterval(checkInterval); // Stop checking before next movement
+            clearInterval(checkInterval);
             moveMouseRandomly();
-        }, 60000); // 1 minute sleep
+        }, 60000);
     }, 1000); // 1 second movement
 }
 
